@@ -4,7 +4,12 @@ require_relative 'errors'
 
 class NullPiece
   include Singleton
-  attr_reader :color
+  attr_reader :color, :pos
+
+  def pos
+    "tricked you"
+  end
+
   def color
     nil
   end
@@ -17,7 +22,8 @@ end
 
 
 class Piece
-  attr_reader :color, :board, :pos
+  attr_reader :color, :board
+  attr_accessor :pos
 
   def horizontal_dir
     [[-1, 0], [0, 1], [1, 0], [0, -1]]
@@ -34,12 +40,14 @@ class Piece
   end
 
   def <=>(another_piece)
-    if another_piece.color.nil?
-      -1
-    elsif self.color != another_piece.color
-      1
-    else
-      0
+    if another_piece
+      if another_piece.color.nil?
+        -1
+      elsif self.color != another_piece.color
+        1
+      else
+        0
+      end
     end
   end
 
@@ -56,7 +64,26 @@ class Piece
   def same_color?(pos)
     self.color == board[*pos].color
   end
+
+
+
+  def dup(board)
+    self.class.new(self.pos, self.color, board)
+  end
+
+
+  def move_into_check?(new_pos)
+    fake_board = board.deep_dup
+    fake_board.move!(self.pos, new_pos)
+    fake_board.in_check?(self.color)
+  end
+
+  def valid_moves
+    self.all_moves(self.move_dirs).reject { |move| self.move_into_check?(move)}
+  end
+
 end
+
 
 class SlidingPiece < Piece
   # attr_reader :board

@@ -1,14 +1,15 @@
 require_relative 'cursorable'
 require 'colorize'
 require_relative 'board'
-require_relative 'chess'
+# require_relative 'chess'
 
 
 class Display
   include Cursorable
   attr_accessor :selected
+  attr_reader :move, :cursor_pos
 
-  def initialize(board)#, chess)
+  def initialize(board)
     @board = board
     # @chess = chess
     @cursor_pos = [7,0]
@@ -36,6 +37,11 @@ class Display
     elsif (i + j).even?
       bg = :yellow
     end
+
+    if @selected && @cursor_pos == [i,j]
+      bg = :red
+    end
+
     # { background: bg, color: :black }
     { background: bg, color: @board[*[i, j]].color }
   end
@@ -47,10 +53,10 @@ class Display
     build_grid.each { |row| puts row.join }
   end
 
-  # def display
-  #   grid.each do |row|
-  #     # byebug
-  #     puts row.map {|piece| piece.class}.join(' ')
-  #   end
-  # end
+  def display
+    grid.each do |row|
+      # byebug
+      puts row.map {|piece| piece.class}.join(' ')
+    end
+  end
 end

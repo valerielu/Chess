@@ -42,7 +42,6 @@ module Cursorable
       exit 0
     when :return, :space
       @selected ? @selected = false : @selected = true
-      # @selected = true
       @cursor_pos
     when :left, :right, :up, :down
       update_pos(MOVES[key])
